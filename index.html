@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+</head>
+
+<body>
+    <style>
+        ul,
+        li {
+            display: inline-block;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+    <header>
+        <h2>Trang quản trị Sinh viên</h2>
+        <button><a href="javascript:logOut()">Đăng xuất</a></button>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Bảng điều khiển</a></li>
+            <li><a href="javascript:redirectCourseManagement()">Quản lý khóa học</a></li>
+            <li><a href="#">Quản lý lớp học</a></li>
+            <li><a href="#">Quản lý sinh viên</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section>
+            <h3>Thông tin khóa học</h3>
+            <p id="courseNumber"></p>
+        </section>
+        <section>
+            <h3>Thông tin lớp học</h3>
+            <p id="classNumber"></p>
+            <p>Số lượng lớp đang hoạt động:3</p>
+            <p>Số lượng lớp đã kết thúc: 5</p>
+        </section>
+        <section>
+            <h3>Thông tin sinh viên</h3>
+            <p id="studentNumber"></p>
+            <p id="studentPending"></p>
+        </section>
+    </main>
+    <footer>
+        <p>Copyright: Rikkei Academy - Fukuoka</p>
+    </footer>
+    <script>
+        function checkLogin() {
+            // Kiểm tra xem đã đăng nhập chưa, nếu chưa đăng nhập thì chuyển về trang đăng nhập
+            let email = localStorage.getItem("userLogin");
+            if (email == null) {
+                // Chưa đăng nhập
+                window.location.href = "loginPage.html";
+            }
+            // Lấy số lượng khóa học
+            let studentManagementStore = localStorage.getItem("studentManagementStore") ? JSON.parse(localStorage.getItem("studentManagementStore")) : [];
+            let courseNumber = 0;
+            let classNumber = 0;
+            let studentNumber = 0;
+            let studentPending = 0;
+            studentManagementStore.forEach(course => {
+                courseNumber++;
+                course.arrClass.forEach(classOfStudent => {
+                    classNumber++;
+                    classOfStudent.arrStudent.forEach(student => {
+                        studentNumber++;
+                        if (student.status == 1) {
+                            studentPending++;
+                        }
+                    });
+                })
+            });
+            document.getElementById("courseNumber").innerText = "Số lượng khóa học: " + courseNumber;
+            document.getElementById("classNumber").innerText = "Số lượng lớp học: " + classNumber;
+            document.getElementById("studentNumber").innerText = "Tổng sinh viên: " + studentNumber;
+            document.getElementById("studentPending").innerText = "Tổng sinh viên chờ lớp: " + studentPending;
+        }
+        function logOut() {
+            // Thực hiện xóa userLogin trong localStorage
+            localStorage.removeItem("userLogin");
+            window.location.href = "loginPage.html";
+        }
+
+        function redirectCourseManagement() {
+            window.location.href = "courseManagement.html";
+        }
+
+        document.onload = checkLogin();
+    </script>
+</body>
+
+</html>
